@@ -28,19 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            menuStrip1 = new MenuStrip();
-            fileToolStripMenuItem = new ToolStripMenuItem();
-            saveToolStripMenuItem = new ToolStripMenuItem();
-            saveAsToolStripMenuItem = new ToolStripMenuItem();
-            closeToolStripMenuItem = new ToolStripMenuItem();
-            viewToolStripMenuItem = new ToolStripMenuItem();
-            viewLastTestOutputToolStripMenuItem = new ToolStripMenuItem();
-            helpToolStripMenuItem = new ToolStripMenuItem();
-            documentationToolStripMenuItem = new ToolStripMenuItem();
-            licenceToolStripMenuItem = new ToolStripMenuItem();
-            aboutToolStripMenuItem = new ToolStripMenuItem();
+            msMainMenu = new MenuStrip();
+            mnuFile = new ToolStripMenuItem();
+            mnuSave = new ToolStripMenuItem();
+            mnuSaveAs = new ToolStripMenuItem();
+            mnuClose = new ToolStripMenuItem();
+            mnuView = new ToolStripMenuItem();
+            mnuViewLastOutput = new ToolStripMenuItem();
+            mnuHelp = new ToolStripMenuItem();
+            mnuDocumentation = new ToolStripMenuItem();
+            mnuLicence = new ToolStripMenuItem();
+            mnuAbout = new ToolStripMenuItem();
             chkWindowsSystemChecks = new CheckedListBox();
-            lblMainMenuInstuctionHeader = new Label();
+            lblMainMenuInstructionHeader = new Label();
             cboDiskSelection = new ComboBox();
             grpDiskScanOptions = new GroupBox();
             radScanAndFixDisk = new RadioButton();
@@ -49,116 +49,120 @@
             btnStartScans = new Button();
             grpStartStopProgress = new GroupBox();
             btnCancelScans = new Button();
-            progressBar1 = new ProgressBar();
-            helpToolStripMenuItem1 = new ToolStripMenuItem();
-            menuStrip1.SuspendLayout();
+            progressBarScans = new ProgressBar();
+            msMainMenu.SuspendLayout();
             grpDiskScanOptions.SuspendLayout();
             grpWindowsSystemChecks.SuspendLayout();
             grpStartStopProgress.SuspendLayout();
             SuspendLayout();
             // 
-            // menuStrip1
+            // msMainMenu
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, viewToolStripMenuItem, helpToolStripMenuItem });
-            menuStrip1.Location = new Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(605, 24);
-            menuStrip1.TabIndex = 0;
-            menuStrip1.Text = "menuStrip1";
+            msMainMenu.ImageScalingSize = new Size(32, 32);
+            msMainMenu.Items.AddRange(new ToolStripItem[] { mnuFile, mnuView, mnuHelp });
+            msMainMenu.Location = new Point(0, 0);
+            msMainMenu.Name = "msMainMenu";
+            msMainMenu.Padding = new Padding(11, 4, 0, 4);
+            msMainMenu.Size = new Size(1193, 44);
+            msMainMenu.TabIndex = 0;
+            msMainMenu.Text = "menuStrip1";
             // 
-            // fileToolStripMenuItem
+            // mnuFile
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveToolStripMenuItem, saveAsToolStripMenuItem, closeToolStripMenuItem });
-            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new Size(37, 20);
-            fileToolStripMenuItem.Text = "File";
+            mnuFile.DropDownItems.AddRange(new ToolStripItem[] { mnuSave, mnuSaveAs, mnuClose });
+            mnuFile.Name = "mnuFile";
+            mnuFile.Size = new Size(71, 36);
+            mnuFile.Text = "File";
             // 
-            // saveToolStripMenuItem
+            // mnuSave
             // 
-            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
-            saveToolStripMenuItem.Text = "Save";
+            mnuSave.Name = "mnuSave";
+            mnuSave.Size = new Size(318, 44);
+            mnuSave.Text = "Save (CTRL + S)";
             // 
-            // saveAsToolStripMenuItem
+            // mnuSaveAs
             // 
-            saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.Size = new Size(180, 22);
-            saveAsToolStripMenuItem.Text = "Save As";
+            mnuSaveAs.Name = "mnuSaveAs";
+            mnuSaveAs.Size = new Size(318, 44);
+            mnuSaveAs.Text = "Save As (F12)";
             // 
-            // closeToolStripMenuItem
+            // mnuClose
             // 
-            closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            closeToolStripMenuItem.Size = new Size(180, 22);
-            closeToolStripMenuItem.Text = "Close";
+            mnuClose.Name = "mnuClose";
+            mnuClose.Size = new Size(318, 44);
+            mnuClose.Text = "Close (ALT + F4)";
             // 
-            // viewToolStripMenuItem
+            // mnuView
             // 
-            viewToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewLastTestOutputToolStripMenuItem, helpToolStripMenuItem1 });
-            viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            viewToolStripMenuItem.Size = new Size(44, 20);
-            viewToolStripMenuItem.Text = "View";
+            mnuView.DropDownItems.AddRange(new ToolStripItem[] { mnuViewLastOutput });
+            mnuView.Name = "mnuView";
+            mnuView.Size = new Size(85, 36);
+            mnuView.Text = "View";
             // 
-            // viewLastTestOutputToolStripMenuItem
+            // mnuViewLastOutput
             // 
-            viewLastTestOutputToolStripMenuItem.Name = "viewLastTestOutputToolStripMenuItem";
-            viewLastTestOutputToolStripMenuItem.Size = new Size(187, 22);
-            viewLastTestOutputToolStripMenuItem.Text = "View Last Test Output";
+            mnuViewLastOutput.Name = "mnuViewLastOutput";
+            mnuViewLastOutput.Size = new Size(497, 44);
+            mnuViewLastOutput.Text = "View Last Test Output (CTRL + V)";
             // 
-            // helpToolStripMenuItem
+            // mnuHelp
             // 
-            helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { documentationToolStripMenuItem, licenceToolStripMenuItem, aboutToolStripMenuItem });
-            helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(44, 20);
-            helpToolStripMenuItem.Text = "Help";
+            mnuHelp.DropDownItems.AddRange(new ToolStripItem[] { mnuDocumentation, mnuLicence, mnuAbout });
+            mnuHelp.Name = "mnuHelp";
+            mnuHelp.Size = new Size(84, 36);
+            mnuHelp.Text = "Help";
             // 
-            // documentationToolStripMenuItem
+            // mnuDocumentation
             // 
-            documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
-            documentationToolStripMenuItem.Size = new Size(180, 22);
-            documentationToolStripMenuItem.Text = "Documentation";
+            mnuDocumentation.Name = "mnuDocumentation";
+            mnuDocumentation.Size = new Size(434, 44);
+            mnuDocumentation.Text = "Documentation (CTRL + H)";
             // 
-            // licenceToolStripMenuItem
+            // mnuLicence
             // 
-            licenceToolStripMenuItem.Name = "licenceToolStripMenuItem";
-            licenceToolStripMenuItem.Size = new Size(180, 22);
-            licenceToolStripMenuItem.Text = "Licence";
+            mnuLicence.Name = "mnuLicence";
+            mnuLicence.Size = new Size(434, 44);
+            mnuLicence.Text = "Licence";
             // 
-            // aboutToolStripMenuItem
+            // mnuAbout
             // 
-            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(180, 22);
-            aboutToolStripMenuItem.Text = "About";
+            mnuAbout.Name = "mnuAbout";
+            mnuAbout.Size = new Size(434, 44);
+            mnuAbout.Text = "About";
             // 
             // chkWindowsSystemChecks
             // 
+            chkWindowsSystemChecks.BackColor = SystemColors.Control;
             chkWindowsSystemChecks.BorderStyle = BorderStyle.None;
             chkWindowsSystemChecks.CheckOnClick = true;
             chkWindowsSystemChecks.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             chkWindowsSystemChecks.FormattingEnabled = true;
             chkWindowsSystemChecks.Items.AddRange(new object[] { "Run Deployment Image Servicing and Management Restore Health (DISM)", "Run System File Checker (SFC)" });
-            chkWindowsSystemChecks.Location = new Point(6, 22);
+            chkWindowsSystemChecks.Location = new Point(11, 47);
+            chkWindowsSystemChecks.Margin = new Padding(6);
             chkWindowsSystemChecks.Name = "chkWindowsSystemChecks";
-            chkWindowsSystemChecks.Size = new Size(542, 48);
+            chkWindowsSystemChecks.Size = new Size(1109, 94);
             chkWindowsSystemChecks.TabIndex = 2;
             // 
-            // lblMainMenuInstuctionHeader
+            // lblMainMenuInstructionHeader
             // 
-            lblMainMenuInstuctionHeader.AutoSize = true;
-            lblMainMenuInstuctionHeader.Font = new Font("Segoe UI Semibold", 15.75F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point, 0);
-            lblMainMenuInstuctionHeader.Location = new Point(12, 33);
-            lblMainMenuInstuctionHeader.Name = "lblMainMenuInstuctionHeader";
-            lblMainMenuInstuctionHeader.Size = new Size(511, 30);
-            lblMainMenuInstuctionHeader.TabIndex = 3;
-            lblMainMenuInstuctionHeader.Text = "Select the options that you wish to use in the check:";
+            lblMainMenuInstructionHeader.AutoSize = true;
+            lblMainMenuInstructionHeader.Font = new Font("Segoe UI Semibold", 15.75F, FontStyle.Bold | FontStyle.Underline, GraphicsUnit.Point, 0);
+            lblMainMenuInstructionHeader.Location = new Point(22, 70);
+            lblMainMenuInstructionHeader.Margin = new Padding(6, 0, 6, 0);
+            lblMainMenuInstructionHeader.Name = "lblMainMenuInstructionHeader";
+            lblMainMenuInstructionHeader.Size = new Size(1017, 57);
+            lblMainMenuInstructionHeader.TabIndex = 3;
+            lblMainMenuInstructionHeader.Text = "Select the options that you wish to use in the check:";
             // 
             // cboDiskSelection
             // 
             cboDiskSelection.FormattingEnabled = true;
-            cboDiskSelection.Location = new Point(5, 71);
+            cboDiskSelection.Location = new Point(9, 151);
+            cboDiskSelection.Margin = new Padding(6);
             cboDiskSelection.Name = "cboDiskSelection";
-            cboDiskSelection.Size = new Size(142, 23);
+            cboDiskSelection.Size = new Size(260, 40);
             cboDiskSelection.TabIndex = 6;
-            cboDiskSelection.Text = "Select a Disk to Scan";
             // 
             // grpDiskScanOptions
             // 
@@ -166,10 +170,11 @@
             grpDiskScanOptions.Controls.Add(radScanAndFixDisk);
             grpDiskScanOptions.Controls.Add(cboDiskSelection);
             grpDiskScanOptions.Controls.Add(radScanDiskOnly);
-            grpDiskScanOptions.Location = new Point(12, 155);
+            grpDiskScanOptions.Location = new Point(22, 331);
+            grpDiskScanOptions.Margin = new Padding(6);
             grpDiskScanOptions.Name = "grpDiskScanOptions";
-            grpDiskScanOptions.Padding = new Padding(2);
-            grpDiskScanOptions.Size = new Size(325, 108);
+            grpDiskScanOptions.Padding = new Padding(4);
+            grpDiskScanOptions.Size = new Size(627, 230);
             grpDiskScanOptions.TabIndex = 7;
             grpDiskScanOptions.TabStop = false;
             grpDiskScanOptions.Text = "Windows Disk Checks:";
@@ -177,9 +182,10 @@
             // radScanAndFixDisk
             // 
             radScanAndFixDisk.AutoSize = true;
-            radScanAndFixDisk.Location = new Point(5, 46);
+            radScanAndFixDisk.Location = new Point(9, 98);
+            radScanAndFixDisk.Margin = new Padding(6);
             radScanAndFixDisk.Name = "radScanAndFixDisk";
-            radScanAndFixDisk.Size = new Size(300, 19);
+            radScanAndFixDisk.Size = new Size(599, 36);
             radScanAndFixDisk.TabIndex = 1;
             radScanAndFixDisk.TabStop = true;
             radScanAndFixDisk.Text = "Check Disk and Attemp to Fix Issues (CHKDSK /F /R)";
@@ -188,9 +194,10 @@
             // radScanDiskOnly
             // 
             radScanDiskOnly.AutoSize = true;
-            radScanDiskOnly.Location = new Point(5, 21);
+            radScanDiskOnly.Location = new Point(9, 45);
+            radScanDiskOnly.Margin = new Padding(6);
             radScanDiskOnly.Name = "radScanDiskOnly";
-            radScanDiskOnly.Size = new Size(159, 19);
+            radScanDiskOnly.Size = new Size(315, 36);
             radScanDiskOnly.TabIndex = 0;
             radScanDiskOnly.TabStop = true;
             radScanDiskOnly.Text = "Scan Disk Only (CHKDSK)";
@@ -199,18 +206,21 @@
             // grpWindowsSystemChecks
             // 
             grpWindowsSystemChecks.Controls.Add(chkWindowsSystemChecks);
-            grpWindowsSystemChecks.Location = new Point(12, 70);
+            grpWindowsSystemChecks.Location = new Point(22, 149);
+            grpWindowsSystemChecks.Margin = new Padding(6);
             grpWindowsSystemChecks.Name = "grpWindowsSystemChecks";
-            grpWindowsSystemChecks.Size = new Size(567, 79);
+            grpWindowsSystemChecks.Padding = new Padding(6);
+            grpWindowsSystemChecks.Size = new Size(1140, 169);
             grpWindowsSystemChecks.TabIndex = 8;
             grpWindowsSystemChecks.TabStop = false;
             grpWindowsSystemChecks.Text = "Windows System Checks:";
             // 
             // btnStartScans
             // 
-            btnStartScans.Location = new Point(454, 22);
+            btnStartScans.Location = new Point(914, 47);
+            btnStartScans.Margin = new Padding(6);
             btnStartScans.Name = "btnStartScans";
-            btnStartScans.Size = new Size(94, 23);
+            btnStartScans.Size = new Size(175, 49);
             btnStartScans.TabIndex = 9;
             btnStartScans.Text = "Start Scans";
             btnStartScans.UseVisualStyleBackColor = true;
@@ -218,52 +228,51 @@
             // grpStartStopProgress
             // 
             grpStartStopProgress.Controls.Add(btnCancelScans);
-            grpStartStopProgress.Controls.Add(progressBar1);
+            grpStartStopProgress.Controls.Add(progressBarScans);
             grpStartStopProgress.Controls.Add(btnStartScans);
-            grpStartStopProgress.Location = new Point(12, 269);
+            grpStartStopProgress.Location = new Point(22, 574);
+            grpStartStopProgress.Margin = new Padding(6);
             grpStartStopProgress.Name = "grpStartStopProgress";
-            grpStartStopProgress.Size = new Size(567, 63);
+            grpStartStopProgress.Padding = new Padding(6);
+            grpStartStopProgress.Size = new Size(1120, 134);
             grpStartStopProgress.TabIndex = 10;
             grpStartStopProgress.TabStop = false;
             grpStartStopProgress.Text = "Progress:";
             // 
             // btnCancelScans
             // 
-            btnCancelScans.Location = new Point(354, 22);
+            btnCancelScans.Location = new Point(728, 47);
+            btnCancelScans.Margin = new Padding(6);
             btnCancelScans.Name = "btnCancelScans";
-            btnCancelScans.Size = new Size(94, 23);
+            btnCancelScans.Size = new Size(175, 49);
             btnCancelScans.TabIndex = 11;
             btnCancelScans.Text = "Cancel Scans";
             btnCancelScans.UseVisualStyleBackColor = true;
             // 
-            // progressBar1
+            // progressBarScans
             // 
-            progressBar1.Location = new Point(6, 22);
-            progressBar1.Name = "progressBar1";
-            progressBar1.Size = new Size(329, 23);
-            progressBar1.TabIndex = 0;
-            // 
-            // helpToolStripMenuItem1
-            // 
-            helpToolStripMenuItem1.Name = "helpToolStripMenuItem1";
-            helpToolStripMenuItem1.Size = new Size(187, 22);
-            helpToolStripMenuItem1.Text = "Help";
+            progressBarScans.Location = new Point(11, 47);
+            progressBarScans.Margin = new Padding(6);
+            progressBarScans.Name = "progressBarScans";
+            progressBarScans.Size = new Size(683, 49);
+            progressBarScans.TabIndex = 0;
             // 
             // MainMenu
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(605, 347);
+            ClientSize = new Size(1193, 733);
             Controls.Add(grpStartStopProgress);
             Controls.Add(grpWindowsSystemChecks);
             Controls.Add(grpDiskScanOptions);
-            Controls.Add(lblMainMenuInstuctionHeader);
-            Controls.Add(menuStrip1);
-            MainMenuStrip = menuStrip1;
+            Controls.Add(lblMainMenuInstructionHeader);
+            Controls.Add(msMainMenu);
+            MainMenuStrip = msMainMenu;
+            Margin = new Padding(6);
             Name = "MainMenu";
             Text = "MainMenu";
-            menuStrip1.ResumeLayout(false);
-            menuStrip1.PerformLayout();
+            msMainMenu.ResumeLayout(false);
+            msMainMenu.PerformLayout();
             grpDiskScanOptions.ResumeLayout(false);
             grpDiskScanOptions.PerformLayout();
             grpWindowsSystemChecks.ResumeLayout(false);
@@ -274,19 +283,19 @@
 
         #endregion
 
-        private MenuStrip menuStrip1;
-        private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStripMenuItem saveToolStripMenuItem;
-        private ToolStripMenuItem saveAsToolStripMenuItem;
-        private ToolStripMenuItem closeToolStripMenuItem;
-        private ToolStripMenuItem viewToolStripMenuItem;
-        private ToolStripMenuItem helpToolStripMenuItem;
-        private ToolStripMenuItem documentationToolStripMenuItem;
-        private ToolStripMenuItem licenceToolStripMenuItem;
-        private ToolStripMenuItem aboutToolStripMenuItem;
-        private ToolStripMenuItem viewLastTestOutputToolStripMenuItem;
+        private MenuStrip msMainMenu;
+        private ToolStripMenuItem mnuFile;
+        private ToolStripMenuItem mnuSave;
+        private ToolStripMenuItem mnuSaveAs;
+        private ToolStripMenuItem mnuClose;
+        private ToolStripMenuItem mnuView;
+        private ToolStripMenuItem mnuHelp;
+        private ToolStripMenuItem mnuDocumentation;
+        private ToolStripMenuItem mnuLicence;
+        private ToolStripMenuItem mnuAbout;
+        private ToolStripMenuItem mnuViewLastOutput;
         private CheckedListBox chkWindowsSystemChecks;
-        private Label lblMainMenuInstuctionHeader;
+        private Label lblMainMenuInstructionHeader;
         private ComboBox cboDiskSelection;
         private GroupBox grpDiskScanOptions;
         private RadioButton radScanAndFixDisk;
@@ -295,7 +304,6 @@
         private Button btnStartScans;
         private GroupBox grpStartStopProgress;
         private Button btnCancelScans;
-        private ProgressBar progressBar1;
-        private ToolStripMenuItem helpToolStripMenuItem1;
+        private ProgressBar progressBarScans;
     }
 }
