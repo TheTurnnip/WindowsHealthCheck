@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WindowsHealthCheckUI
+namespace WindowsHealthCheck.WindowsHealthCheckUI
 {
     public partial class MainMenu : Form
     {

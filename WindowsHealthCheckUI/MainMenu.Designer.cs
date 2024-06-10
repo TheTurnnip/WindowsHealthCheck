@@ -1,4 +1,4 @@
-﻿namespace WindowsHealthCheckUI
+﻿namespace WindowsHealthCheck.WindowsHealthCheckUI
 {
     partial class MainMenu
     {
