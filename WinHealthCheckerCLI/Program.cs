@@ -26,14 +26,9 @@ class Program
             "[green]<enter>[/] to accept)[/]")
         .AddChoices(CommandOptions.Keys.ToArray());
     
-    private static Table logOutputTable = new Table()
-        .Title("Logs")
-        .AddColumn(new TableColumn("Command").Centered())
-        .AddColumn(new TableColumn("Status").Centered())
-        .AddColumn(new TableColumn("Output").Centered())
-        .Border(TableBorder.Ascii2);
-    
     private static string[] _userSelectedOptions;
+    private static bool _doFileLogging;
+    private static string _logFilePath;
     
     static async Task Main(string[] args)
     {
@@ -48,31 +43,67 @@ class Program
         {
             AnsiConsole.Clear();
             AnsiConsole.Write(WelcomeMessage);
+            
             _userSelectedOptions = AnsiConsole.Prompt(commandOptionsPrompt).ToArray();
-            AnsiConsole.MarkupLine("[bold green]You selected:[/]");
-            foreach (var option in _userSelectedOptions)
-            {
-                AnsiConsole.MarkupLine($"- {option}");
-            }
-            bool runCommands = AnsiConsole.Confirm("Are you sure you want to run the selected commands?", false);
-            if (runCommands)
-            {
-                selectionConfirmed = true;
-            }
+            
+            LoggingPrompt();
+            
+            selectionConfirmed = OptionsSelectionConfirmed(selectionConfirmed);
         }
+        
         AnsiConsole.MarkupLine("[bold green]Repair tool starting...[/]");
         foreach (var option in _userSelectedOptions)
         {
-            AnsiConsole.MarkupLineInterpolated($"Running {option}...");
+            AnsiConsole.MarkupLineInterpolated($"[bold green]Running {option}...[/]");
             bool commandSuccessful = await CommandOptions[option].RunAsync();
-            if (commandSuccessful)
-            {
-                AnsiConsole.MarkupLineInterpolated($"[bold green]{option}: {option} completed![/]");
+            AnsiConsole.MarkupLineInterpolated(commandSuccessful
+                ? (FormattableString)$"[bold green]{option}: {option} completed![/]"
+                : (FormattableString)$"[bold red]{option}: {option} Failed![/]");
+        }
+    }
+
+    private static bool OptionsSelectionConfirmed(bool selectionConfirmed)
+    {
+        AnsiConsole.Clear();
+        Markup loggingTitle = new Markup("[bold underline green]Scan Options Overview...[/]\n").Centered();
+        AnsiConsole.Write(loggingTitle);
+        AnsiConsole.MarkupLine("[bold green]You selected:[/]");
+        foreach (var option in _userSelectedOptions)
+        {
+            AnsiConsole.MarkupLine($"- {option}");
+        }
+            
+        bool runCommands = AnsiConsole.Confirm("Are you sure you want to run the selected tools?", false);
+        if (runCommands)
+        {
+            selectionConfirmed = true;
+        }
+
+        return selectionConfirmed;
+    }
+
+    private static void LoggingPrompt()
+    {
+        bool loggingConfirmed = false;
+        Markup loggingTitle = new Markup("[bold underline green]Logging Setup...[/]\n").Centered();
+        
+        while (!loggingConfirmed)
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.Write(loggingTitle);
+            bool doFileLogging = AnsiConsole.Confirm("Do you want to log the output to a file?", false);
+            if (doFileLogging)
+            { 
+                AnsiConsole.MarkupLine("[bold yellow]Notes:[/] \n" +
+                                       "- If the file does not exist it will be created.\n" +
+                                       "- [red]If the file already exists, it will be overwritten![/]\n");
+                _logFilePath = AnsiConsole.Ask<string>("Enter the file path to save the log file:");
+                _doFileLogging = true;
             }
-            else
-            {
-                AnsiConsole.MarkupLineInterpolated($"[bold red]{option}: {option} Failed![/]");
-            }
+            
+            loggingConfirmed = AnsiConsole.Confirm("[bold underline yellow]Your logging file is set to:[/] \n" +
+                                                   $"{_logFilePath}\n\n" +
+                                                   $"Are you sure you want to log to this file?", false);
         }
     }
 
