@@ -5,6 +5,7 @@ namespace Commands;
 public class CommandRunner
 {
     private readonly Process _process;
+    private readonly string? _arguments;
     
     public event EventHandler<OutputDataReceivedArgs>? StandardOutputDataReceived;
     
@@ -14,6 +15,7 @@ public class CommandRunner
     /// <param name="command">The command to run. (Ex. "ping 8.8.8.8")</param>
     public CommandRunner(string command)
     {
+        _arguments = command;
         ProcessStartInfo processStartInfo = new ProcessStartInfo
         {
             FileName = "cmd.exe",
@@ -66,6 +68,6 @@ public class CommandRunner
         {
             throw new NullReferenceException("The StandardOutputDataReceived even has no subscribers.");
         }
-        StandardOutputDataReceived.Invoke(this, new OutputDataReceivedArgs(outputLine));
+        StandardOutputDataReceived.Invoke(this, new OutputDataReceivedArgs(_arguments, outputLine));
     }
 }

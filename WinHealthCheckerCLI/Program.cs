@@ -6,18 +6,28 @@ namespace WinHealthCheckerCLI;
 
 internal class Program
 {
+    /// <summary>
+    /// The title for a screen in the TUI.
+    /// Default is the welcome message displayed on the main screen.
+    /// </summary>
     private static readonly Markup WelcomeMessage = new Markup(
             "[bold underline green]Welcome to the Windows Health Checker CLI![/]")
         .Centered();
 
+    /// <summary>
+    /// A dictionary of command options and their corresponding CommandRunner instances.
+    /// </summary>
     private static readonly Dictionary<string, CommandRunner> CommandOptions = new()
     {
-        { "Deployment Image Servicing and Management Health Restoration", new CommandRunner("ping 127.0.0.1") },
+        { "Deployment Image Servicing and Management Health Restoration", new CommandRunner("ping 192.168.5.1") },
         { "Run System File Checker", new CommandRunner("ping 127.0.0.1") },
         { "Run A Disk Scan", new CommandRunner("ping 127.0.0.1") },
         { "Repair a Disk", new CommandRunner("ping 127.0.0.1") }
     };
 
+    /// <summary>
+    /// The selection prompt for the tools and scans to run.
+    /// </summary>
     private static readonly MultiSelectionPrompt<string> commandOptionsPrompt = new MultiSelectionPrompt<string>()
         .Title("[bold yellow]Select the commands you want to run:[/]")
         .InstructionsText(
@@ -26,8 +36,28 @@ internal class Program
             "[green]<enter>[/] to accept)[/]")
         .AddChoices(CommandOptions.Keys.ToArray());
 
+    private static readonly Drives Drives = new();
+    
+    private static readonly SelectionPrompt<string> diskSelectionPrompt = new SelectionPrompt<string>()
+        .Title("Select a disk to scan:")
+        .AddChoices(Drives.DriveNames.ToArray());
+
+    /// <summary>
+    /// The selections a user has made from the commandOptionsPrompt.
+    /// </summary>
     private static string[] _userSelectedOptions;
+    
+    
+    private static string _diskToScan;
+    
+    /// <summary>
+    /// If the program should do file logging.
+    /// </summary>
     private static bool _doFileLogging;
+    
+    /// <summary>
+    /// The path to the log file.
+    /// </summary>
     private static string _logFilePath;
 
     private static async Task Main(string[] args)
@@ -36,14 +66,14 @@ internal class Program
             commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
 
         var selectionConfirmed = false;
-
         while (!selectionConfirmed)
         {
             AnsiConsole.Clear();
             AnsiConsole.Write(WelcomeMessage);
 
             _userSelectedOptions = AnsiConsole.Prompt(commandOptionsPrompt).ToArray();
-
+            _diskToScan = AnsiConsole.Prompt(diskSelectionPrompt);
+  
             LoggingPrompt();
 
             selectionConfirmed = OptionsSelectionConfirmed(selectionConfirmed);
@@ -78,7 +108,7 @@ internal class Program
 
         return selectionConfirmed;
     }
-
+    
     private static void LoggingPrompt()
     {
         var loggingConfirmed = false;
