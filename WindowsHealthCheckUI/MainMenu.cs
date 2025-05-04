@@ -16,5 +16,10 @@ namespace WindowsHealthCheckUI
         {
             InitializeComponent();
         }
+
+        private void chkWindowsSystemChecks_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

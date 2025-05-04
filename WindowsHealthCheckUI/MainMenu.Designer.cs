@@ -63,7 +63,7 @@
             msMainMenu.Location = new Point(0, 0);
             msMainMenu.Name = "msMainMenu";
             msMainMenu.Padding = new Padding(11, 4, 0, 4);
-            msMainMenu.Size = new Size(1193, 44);
+            msMainMenu.Size = new Size(1193, 46);
             msMainMenu.TabIndex = 0;
             msMainMenu.Text = "menuStrip1";
             // 
@@ -71,7 +71,7 @@
             // 
             mnuFile.DropDownItems.AddRange(new ToolStripItem[] { mnuSave, mnuSaveAs, mnuClose });
             mnuFile.Name = "mnuFile";
-            mnuFile.Size = new Size(71, 36);
+            mnuFile.Size = new Size(71, 38);
             mnuFile.Text = "File";
             // 
             // mnuSave
@@ -96,7 +96,7 @@
             // 
             mnuView.DropDownItems.AddRange(new ToolStripItem[] { mnuViewLastOutput });
             mnuView.Name = "mnuView";
-            mnuView.Size = new Size(85, 36);
+            mnuView.Size = new Size(85, 38);
             mnuView.Text = "View";
             // 
             // mnuViewLastOutput
@@ -109,7 +109,7 @@
             // 
             mnuHelp.DropDownItems.AddRange(new ToolStripItem[] { mnuDocumentation, mnuLicence, mnuAbout });
             mnuHelp.Name = "mnuHelp";
-            mnuHelp.Size = new Size(84, 36);
+            mnuHelp.Size = new Size(84, 38);
             mnuHelp.Text = "Help";
             // 
             // mnuDocumentation
@@ -294,7 +294,7 @@
         private ToolStripMenuItem mnuLicence;
         private ToolStripMenuItem mnuAbout;
         private ToolStripMenuItem mnuViewLastOutput;
-        private CheckedListBox chkWindowsSystemChecks;
+        private System.Windows.Forms.CheckedListBox chkWindowsSystemChecks;
         private Label lblMainMenuInstructionHeader;
         private ComboBox cboDiskSelection;
         private GroupBox grpDiskScanOptions;

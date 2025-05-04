@@ -5,6 +5,10 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinHealthCheckerUI", "WindowsHealthCheckUI\WinHealthCheckerUI.csproj", "{F12E2512-FD90-41B4-8B17-80601139DFF9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commands", "Commands\Commands.csproj", "{B07C579A-0E10-4294-BE91-26632961DAD9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinHealthCheckerCLI", "WinHealthCheckerCLI\WinHealthCheckerCLI.csproj", "{3E19EB1F-7376-4D6D-AF0E-611276BB6D14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{F12E2512-FD90-41B4-8B17-80601139DFF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F12E2512-FD90-41B4-8B17-80601139DFF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F12E2512-FD90-41B4-8B17-80601139DFF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B07C579A-0E10-4294-BE91-26632961DAD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07C579A-0E10-4294-BE91-26632961DAD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B07C579A-0E10-4294-BE91-26632961DAD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B07C579A-0E10-4294-BE91-26632961DAD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E19EB1F-7376-4D6D-AF0E-611276BB6D14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E19EB1F-7376-4D6D-AF0E-611276BB6D14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E19EB1F-7376-4D6D-AF0E-611276BB6D14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E19EB1F-7376-4D6D-AF0E-611276BB6D14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
