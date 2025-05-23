@@ -1,3 +1,5 @@
+using Spectre.Console;
+
 namespace WinHealthCheckerCLI.Prompts;
 
 public class ToolOptionsPrompt : IPrompter
@@ -6,9 +8,16 @@ public class ToolOptionsPrompt : IPrompter
     public IPrompter PreviousPrompter { get; set; }
     public IPrompter NextPrompter { get; set; }
 
-    public Task<string[]> DisplayPrompt()
+    public async Task<string[]> DisplayPrompt()
     {
-        throw new NotImplementedException();
+        AnsiConsole.Clear();
+        AnsiConsole.Write(new Markup("[bold green underline]Welcome to WinHealthCheck![/]").Centered());
+        while (UserSelectedOptions == null)
+        {
+            await Task.Delay(50);
+        }
+        
+        return UserSelectedOptions;
     }
 
     public void ReturnToPreviousPrompt()
