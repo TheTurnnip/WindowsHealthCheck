@@ -6,7 +6,7 @@ public class HelpPrompt : IPrompter
 {
     public string[] UserSelectedOptions { get; set; }
     
-    public async Task<string[]> DisplayPrompt()
+    public Task<string[]> DisplayPrompt()
     {
         AnsiConsole.Clear(); 
         
@@ -44,7 +44,9 @@ public class HelpPrompt : IPrompter
             "only check for errors and not fix them, or you can also select the option to fix them.");
         AnsiConsole.Write(_optionsTable);
         
-        DisplayMoreInfo("Do you wish to see the how to use message? Press space continue...");
+        var key = DisplayMoreInfo("Do you wish to see the how to use message? Press space to continue or 'b' to go back...");
+        if (key == ConsoleKey.B)
+            return Task.FromResult(UserSelectedOptions);
 
         // Displays a simple explanation of how to use the application.
         AnsiConsole.WriteLine();
@@ -60,7 +62,9 @@ public class HelpPrompt : IPrompter
         aboutPanel.Border = BoxBorder.Rounded;
         AnsiConsole.Write(new Align(aboutPanel, HorizontalAlignment.Center));
         
-        DisplayMoreInfo("Do you wish to see the licence details? Press space continue...");
+        var key2 = DisplayMoreInfo("Do you wish to see the licence details? Press space to continue or 'b' to go back...");
+        if (key2 == ConsoleKey.B)
+            return Task.FromResult(UserSelectedOptions);
         
         // Display the licence details for the application.
         AnsiConsole.WriteLine();
@@ -83,15 +87,18 @@ public class HelpPrompt : IPrompter
         licencePanel.Border = BoxBorder.Rounded;
         AnsiConsole.Write(new Align(licencePanel, HorizontalAlignment.Center));
         
-        return UserSelectedOptions;
+        return Task.FromResult(UserSelectedOptions);
     }
     
-    private static void DisplayMoreInfo(string message)
+    private static ConsoleKey DisplayMoreInfo(string message)
     {
         AnsiConsole.WriteLine();
         AnsiConsole.WriteLine();
         AnsiConsole.MarkupLineInterpolated($"[yellow underline]{message}[/]");
-        Console.ReadKey(false);
+        while (true)
+        {
+            var key = AnsiConsole.Console.Input.ReadKey(true);
+            return key!.Value.Key;
+        }
     }
 }
-

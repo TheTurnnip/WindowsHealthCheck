@@ -8,8 +8,8 @@ namespace WinHealthCheckerCLI;
 
 internal class Program
 {
-    private static IPrompter _currentPrompter;
-    private static IPrompter _previousPrompter;
+    private static IPrompter? _currentPrompter;
+    private static IPrompter? _previousPrompter;
     
     private static async Task Main(string[] args)
     {
@@ -29,9 +29,12 @@ internal class Program
                     await _currentPrompter.DisplayPrompt();
                     break;
                 case ConsoleKey.B:
-                    _currentPrompter = _previousPrompter;
+                    if (_previousPrompter != null)
+                    {
+                        _currentPrompter = _previousPrompter;
+                    }
                     AnsiConsole.WriteLine("Returning to the previous prompt...");;
-                    await _currentPrompter.DisplayPrompt();
+                    await _currentPrompter!.DisplayPrompt();
                     break;
             }
         };
