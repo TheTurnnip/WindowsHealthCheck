@@ -13,6 +13,7 @@ internal class Program
     
     private static async Task Main(string[] args)
     {
+        
         var keyboardMonitor = new KeyboardMonitor(50);
         keyboardMonitor.KeyPressed += async (_, eventArgs) =>
         {

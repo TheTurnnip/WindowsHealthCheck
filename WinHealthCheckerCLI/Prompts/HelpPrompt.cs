@@ -6,6 +6,10 @@ public class HelpPrompt : IPrompter
 {
     public string[] UserSelectedOptions { get; set; }
     
+    /// <summary>
+    /// Displays the help prompt in the CLI.
+    /// </summary>
+    /// <returns>An empty string array.</returns>
     public Task<string[]> DisplayPrompt()
     {
         AnsiConsole.Clear(); 
@@ -90,6 +94,11 @@ public class HelpPrompt : IPrompter
         return Task.FromResult(UserSelectedOptions);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="message"></param>
+    /// <returns></returns>
     private static ConsoleKey DisplayMoreInfo(string message)
     {
         AnsiConsole.WriteLine();

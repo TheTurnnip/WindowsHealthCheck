@@ -49,6 +49,14 @@ public class CommandRunner
                 }
             }
             await _process.WaitForExitAsync();
+            var exitCode = _process.ExitCode;
+            
+            if (exitCode != 0)
+            {
+                Console.WriteLine("The command exited with a non-zero exit code: " + exitCode);
+                return false;
+            }
+            
             return true;
         }
         catch (Exception e)
