@@ -48,6 +48,7 @@
             grpWindowsSystemChecks = new System.Windows.Forms.GroupBox();
             btnStartScans = new System.Windows.Forms.Button();
             grpStartStopProgress = new System.Windows.Forms.GroupBox();
+            btnShowScanOutput = new System.Windows.Forms.Button();
             btnCancelScans = new System.Windows.Forms.Button();
             progressBarScans = new System.Windows.Forms.ProgressBar();
             msMainMenu.SuspendLayout();
@@ -63,7 +64,7 @@
             msMainMenu.Location = new System.Drawing.Point(0, 0);
             msMainMenu.Name = "msMainMenu";
             msMainMenu.Padding = new System.Windows.Forms.Padding(11, 4, 0, 4);
-            msMainMenu.Size = new System.Drawing.Size(1193, 44);
+            msMainMenu.Size = new System.Drawing.Size(1245, 44);
             msMainMenu.TabIndex = 0;
             msMainMenu.Text = "menuStrip1";
             // 
@@ -146,6 +147,7 @@
             // 
             // lblMainMenuInstructionHeader
             // 
+            lblMainMenuInstructionHeader.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             lblMainMenuInstructionHeader.AutoSize = true;
             lblMainMenuInstructionHeader.Font = new System.Drawing.Font("Segoe UI Semibold", 15.75F, ((System.Drawing.FontStyle)(System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline)), System.Drawing.GraphicsUnit.Point, ((byte)0));
             lblMainMenuInstructionHeader.Location = new System.Drawing.Point(22, 70);
@@ -166,15 +168,16 @@
             // 
             // grpDiskScanOptions
             // 
+            grpDiskScanOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             grpDiskScanOptions.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             grpDiskScanOptions.Controls.Add(radScanAndFixDisk);
             grpDiskScanOptions.Controls.Add(cboDiskSelection);
             grpDiskScanOptions.Controls.Add(radScanDiskOnly);
-            grpDiskScanOptions.Location = new System.Drawing.Point(22, 331);
+            grpDiskScanOptions.Location = new System.Drawing.Point(22, 323);
             grpDiskScanOptions.Margin = new System.Windows.Forms.Padding(6);
             grpDiskScanOptions.Name = "grpDiskScanOptions";
             grpDiskScanOptions.Padding = new System.Windows.Forms.Padding(4);
-            grpDiskScanOptions.Size = new System.Drawing.Size(627, 230);
+            grpDiskScanOptions.Size = new System.Drawing.Size(679, 230);
             grpDiskScanOptions.TabIndex = 7;
             grpDiskScanOptions.TabStop = false;
             grpDiskScanOptions.Text = "Windows Disk Checks:";
@@ -205,70 +208,91 @@
             // 
             // grpWindowsSystemChecks
             // 
+            grpWindowsSystemChecks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             grpWindowsSystemChecks.Controls.Add(chkWindowsSystemChecks);
             grpWindowsSystemChecks.Location = new System.Drawing.Point(22, 149);
             grpWindowsSystemChecks.Margin = new System.Windows.Forms.Padding(6);
             grpWindowsSystemChecks.Name = "grpWindowsSystemChecks";
             grpWindowsSystemChecks.Padding = new System.Windows.Forms.Padding(6);
-            grpWindowsSystemChecks.Size = new System.Drawing.Size(1140, 169);
+            grpWindowsSystemChecks.Size = new System.Drawing.Size(1192, 160);
             grpWindowsSystemChecks.TabIndex = 8;
             grpWindowsSystemChecks.TabStop = false;
             grpWindowsSystemChecks.Text = "Windows System Checks:";
             // 
             // btnStartScans
             // 
-            btnStartScans.Location = new System.Drawing.Point(914, 47);
+            btnStartScans.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            btnStartScans.Location = new System.Drawing.Point(988, 47);
             btnStartScans.Margin = new System.Windows.Forms.Padding(6);
             btnStartScans.Name = "btnStartScans";
-            btnStartScans.Size = new System.Drawing.Size(175, 49);
+            btnStartScans.Size = new System.Drawing.Size(204, 49);
             btnStartScans.TabIndex = 9;
             btnStartScans.Text = "Start Scans";
             btnStartScans.UseVisualStyleBackColor = true;
             // 
             // grpStartStopProgress
             // 
+            grpStartStopProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            grpStartStopProgress.Controls.Add(btnShowScanOutput);
             grpStartStopProgress.Controls.Add(btnCancelScans);
             grpStartStopProgress.Controls.Add(progressBarScans);
             grpStartStopProgress.Controls.Add(btnStartScans);
-            grpStartStopProgress.Location = new System.Drawing.Point(22, 574);
+            grpStartStopProgress.Location = new System.Drawing.Point(22, 563);
             grpStartStopProgress.Margin = new System.Windows.Forms.Padding(6);
             grpStartStopProgress.Name = "grpStartStopProgress";
             grpStartStopProgress.Padding = new System.Windows.Forms.Padding(6);
-            grpStartStopProgress.Size = new System.Drawing.Size(1120, 134);
+            grpStartStopProgress.Size = new System.Drawing.Size(1208, 191);
             grpStartStopProgress.TabIndex = 10;
             grpStartStopProgress.TabStop = false;
             grpStartStopProgress.Text = "Progress:";
             // 
+            // btnShowScanOutput
+            // 
+            btnShowScanOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            btnShowScanOutput.Location = new System.Drawing.Point(12, 117);
+            btnShowScanOutput.Margin = new System.Windows.Forms.Padding(6);
+            btnShowScanOutput.Name = "btnShowScanOutput";
+            btnShowScanOutput.Size = new System.Drawing.Size(1180, 49);
+            btnShowScanOutput.TabIndex = 12;
+            btnShowScanOutput.Text = "Show Scan Output";
+            btnShowScanOutput.UseVisualStyleBackColor = true;
+            // 
             // btnCancelScans
             // 
-            btnCancelScans.Location = new System.Drawing.Point(728, 47);
+            btnCancelScans.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            btnCancelScans.Location = new System.Drawing.Point(772, 47);
             btnCancelScans.Margin = new System.Windows.Forms.Padding(6);
             btnCancelScans.Name = "btnCancelScans";
-            btnCancelScans.Size = new System.Drawing.Size(175, 49);
+            btnCancelScans.Size = new System.Drawing.Size(204, 49);
             btnCancelScans.TabIndex = 11;
             btnCancelScans.Text = "Cancel Scans";
             btnCancelScans.UseVisualStyleBackColor = true;
             // 
             // progressBarScans
             // 
+            progressBarScans.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
             progressBarScans.Location = new System.Drawing.Point(11, 47);
             progressBarScans.Margin = new System.Windows.Forms.Padding(6);
             progressBarScans.Name = "progressBarScans";
-            progressBarScans.Size = new System.Drawing.Size(683, 49);
+            progressBarScans.Size = new System.Drawing.Size(749, 49);
             progressBarScans.TabIndex = 0;
             // 
             // MainMenu
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1193, 733);
+            ClientSize = new System.Drawing.Size(1245, 779);
             Controls.Add(grpStartStopProgress);
             Controls.Add(grpWindowsSystemChecks);
             Controls.Add(grpDiskScanOptions);
             Controls.Add(lblMainMenuInstructionHeader);
             Controls.Add(msMainMenu);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             MainMenuStrip = msMainMenu;
             Margin = new System.Windows.Forms.Padding(6);
+            MaximizeBox = false;
+            MaximumSize = new System.Drawing.Size(1275, 854);
+            MinimumSize = new System.Drawing.Size(1275, 854);
             Text = "MainMenu";
             msMainMenu.ResumeLayout(false);
             msMainMenu.PerformLayout();
@@ -279,6 +303,8 @@
             ResumeLayout(false);
             PerformLayout();
         }
+
+        private System.Windows.Forms.Button btnShowScanOutput;
 
         #endregion
 
@@ -294,15 +320,15 @@
         private ToolStripMenuItem mnuAbout;
         private ToolStripMenuItem mnuViewLastOutput;
         private System.Windows.Forms.CheckedListBox chkWindowsSystemChecks;
-        private Label lblMainMenuInstructionHeader;
+        private System.Windows.Forms.Label lblMainMenuInstructionHeader;
         private ComboBox cboDiskSelection;
-        private GroupBox grpDiskScanOptions;
+        private System.Windows.Forms.GroupBox grpDiskScanOptions;
         private RadioButton radScanAndFixDisk;
         private RadioButton radScanDiskOnly;
-        private GroupBox grpWindowsSystemChecks;
-        private Button btnStartScans;
-        private GroupBox grpStartStopProgress;
-        private Button btnCancelScans;
-        private ProgressBar progressBarScans;
+        private System.Windows.Forms.GroupBox grpWindowsSystemChecks;
+        private System.Windows.Forms.Button btnStartScans;
+        private System.Windows.Forms.GroupBox grpStartStopProgress;
+        private System.Windows.Forms.Button btnCancelScans;
+        private System.Windows.Forms.ProgressBar progressBarScans;
     }
 }
