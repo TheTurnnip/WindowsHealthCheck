@@ -25,6 +25,11 @@ public partial class ScanOutput : Form
         txtBoxScanOutput.Clear();
     }
     
+    public string GetOutput()
+    {
+        return txtBoxScanOutput.Text;
+    }
+    
     public void ResetToDefault()
     {
         txtBoxScanOutput.Text = _defaultText;

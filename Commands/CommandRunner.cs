@@ -31,8 +31,8 @@ public class CommandRunner
             StartInfo = processStartInfo,
         };
     }
-
-    public async Task<bool> RunAsync()
+    
+    public async Task<bool> RunAsync(IProgress<int>? progress)
     {
         try
         {
@@ -42,6 +42,7 @@ public class CommandRunner
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
             await _process.WaitForExitAsync();
+            progress?.Report(1);
             var exitCode = _process.ExitCode;
 
             if (exitCode != 0)
@@ -56,6 +57,11 @@ public class CommandRunner
         {
             Console.WriteLine("There was an error running the command: " + e.Message);
             return false;
+        }
+        finally
+        {
+            _process.CancelErrorRead();
+            _process.CancelOutputRead();
         }
     }
 
