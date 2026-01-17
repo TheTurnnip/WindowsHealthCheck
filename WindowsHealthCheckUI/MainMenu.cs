@@ -19,24 +19,38 @@ namespace WinHealthCheckerUI
             {
                 "Run System File Checker (SFC)",
                 new CommandRunner("ping 1.1.1.1")
+            },
+            {
+                "Check Disk and Attempt to Fix Issues (CHKDSK /F /R)",
+                new CommandRunner("ping 127.0.0.1")
+            },
+            {
+                "Scan Disk Only (CHKDSK)",
+                new CommandRunner("ping 9.9.9.9")
             }
         };
 
         private readonly List<string> _selectedSystemCommands = new();
-        private bool _diskCheckWithFixes;
+        private CommandRunner? _diskCheckCommand;
         private bool _isScanning;
         private string? _lastScanOutput;
         private bool _isLastScanSaved = true;
         private string? _existingSaveFilePath;
+        private bool _isDiskScanSelected;
         private const string DocumentationUrl = "";
+        private const string HelpUrl = "";
+        private const string AboutUrl = "";
 
         public MainMenu()
         {
             InitializeComponent();
-
+            
+            _isDiskScanSelected = radNoScan.Checked;
+            
             // Handle changes to the selection of system check commands. 
             chkWindowsSystemChecks.SelectedValueChanged += (_, _) =>
             {
+                var previousCommandCount = _selectedSystemCommands.Count;
                 _selectedSystemCommands.Clear();
                 foreach (var command in chkWindowsSystemChecks.CheckedItems)
                 {
@@ -45,11 +59,21 @@ namespace WinHealthCheckerUI
                         _selectedSystemCommands.Add(command.ToString() ?? "unknown");
                     }
                 }
+                var currentCommandCount = _selectedSystemCommands.Count;
+                if (currentCommandCount < previousCommandCount)
+                {
+                    DecrementSelectedCommands();
+                }
+                if (currentCommandCount > previousCommandCount)
+                {
+                    IncrementSelectedCommands();
+                }
             };
-
-            // Handle disk check command options.
-            radScanDiskOnly.Click += (_, _) => _diskCheckWithFixes = false;
-            radScanAndFixDisk.Click += (_, _) => _diskCheckWithFixes = true;
+            
+            // Handle the disk radio button changes.
+            radNoScan.CheckedChanged += RadScanCheckedChanged;
+            radScanDiskOnly.CheckedChanged += RadScanCheckedChanged;
+            radScanAndFixDisk.CheckedChanged += RadScanCheckedChanged;
 
             // Handle the scan start button click event.
             btnStartScans.Click += async (_, _) =>
@@ -80,12 +104,13 @@ namespace WinHealthCheckerUI
                 }
 
                 _isScanning = true;
+                btnCancelScans.Enabled = true;
                 btnStartScans.Enabled = false;
                 
                 // Initialize the progress bar.
-                progressBarScans.Minimum = 1;
-                // +1 for disk check, +1 for initial progress
-                progressBarScans.Maximum = _selectedSystemCommands.Count + 2;
+                progressBarScans.Minimum = 0;
+                progressBarScans.Maximum = _selectedSystemCommands.Count 
+                                           + (_diskCheckCommand is not null ? 1 : 0);
                 progressBarScans.Step = 1;
                 var progress = new Progress<int>(percent =>
                 {
@@ -97,6 +122,15 @@ namespace WinHealthCheckerUI
                 ScanOutput.AddNewLine("Starting selected scans...");
                 ScanOutput.Show();
 
+                if (_selectedSystemCommands.Count == 0 && _diskCheckCommand is null)
+                {
+                    ScanOutput.AddNewLine("No scans selected. Please select at least one scan to run.");
+                    _isScanning = false;
+                    btnStartScans.Enabled = true;
+                    btnCancelScans.Enabled = false;
+                    return;
+                }
+                
                 // Run the selected system commands.
                 foreach (var command in _selectedSystemCommands)
                 {
@@ -106,17 +140,10 @@ namespace WinHealthCheckerUI
                 }
 
                 // Run the disk check command based on user selection.
-                if (_diskCheckWithFixes)
+                if (_diskCheckCommand is not null)
                 {
-                    var commandRunner = new CommandRunner("ping 127.0.0.1");
-                    commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
-                    await commandRunner.RunAsync(progress);
-                }
-                else
-                {
-                    var commandRunner = new CommandRunner("ping 9.9.9.9");
-                    commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
-                    await commandRunner.RunAsync(progress);
+                    _diskCheckCommand.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
+                    await _diskCheckCommand.RunAsync(progress);
                 }
 
                 // Handle the completion of all scans.
@@ -125,6 +152,7 @@ namespace WinHealthCheckerUI
                 _isLastScanSaved = false;
                 _isScanning = false;
                 btnStartScans.Enabled = true;
+                btnCancelScans.Enabled = false;
             };
 
             // Handle showing the scan output window.
@@ -223,6 +251,40 @@ namespace WinHealthCheckerUI
         }
 
         /// <summary>
+        /// Handle the changes to the disk scan radio buttons.
+        /// </summary>
+        private void RadScanCheckedChanged(object? sender, EventArgs e)
+        {
+            if (radNoScan.Checked)
+            {
+                _diskCheckCommand = null;
+                if (_isDiskScanSelected)
+                {
+                    DecrementSelectedCommands();
+                }
+                _isDiskScanSelected = false;
+            }
+            else if (radScanDiskOnly.Checked)
+            {
+                _diskCheckCommand = _commandLookup[radScanDiskOnly.Text];
+                if (!_isDiskScanSelected)
+                {
+                    IncrementSelectedCommands();
+                }
+                _isDiskScanSelected = true;
+            }
+            else if (radScanAndFixDisk.Checked)
+            {
+                _diskCheckCommand = _commandLookup[radScanDiskOnly.Text];
+                if (!_isDiskScanSelected)
+                {
+                    IncrementSelectedCommands();
+                }
+                _isDiskScanSelected = true;
+            }
+        }
+
+        /// <summary>
         /// Saves the last scan output to a new file chosen by the user.
         /// </summary>
         private void SaveScanAsFile()
@@ -265,6 +327,23 @@ namespace WinHealthCheckerUI
                 );
                 _isLastScanSaved = false;
             }
+        }
+
+        /// <summary>
+        /// Increments the value of selected commands by one.
+        /// </summary>
+        private void IncrementSelectedCommands()
+        {
+            lblSelectedScansValue.Text = (int.Parse(lblSelectedScansValue.Text) + 1).ToString();
+        }
+        
+        /// <summary>
+        /// Decrements the value of selected commands by one.
+        /// </summary>
+        private void DecrementSelectedCommands()
+        {
+            var decrement = int.Parse(lblSelectedScansValue.Text) - 1;
+            lblSelectedScansValue.Text = decrement < 0 ? "0" : decrement.ToString();
         }
 
         /// <summary>
