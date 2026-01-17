@@ -21,7 +21,7 @@ namespace WinHealthCheckerUI
                 new CommandRunner("ping 1.1.1.1")
             },
             {
-                "Check Disk and Attempt to Fix Issues (CHKDSK /F /R)",
+                "Check Disk and Attemp to Fix Issues (CHKDSK /F /R)",
                 new CommandRunner("ping 127.0.0.1")
             },
             {
@@ -31,7 +31,7 @@ namespace WinHealthCheckerUI
         };
 
         private readonly List<string> _selectedSystemCommands = new();
-        private CommandRunner? _diskCheckCommand;
+        private string? _diskCheckCommand;
         private bool _isScanning;
         private string? _lastScanOutput;
         private bool _isLastScanSaved = true;
@@ -118,6 +118,7 @@ namespace WinHealthCheckerUI
                     progressBarScans.PerformStep();
                 });
                 
+                // Prepare the scan output window.
                 ScanOutput.ClearOutput();
                 ScanOutput.AddNewLine("Starting selected scans...");
                 ScanOutput.Show();
@@ -135,6 +136,7 @@ namespace WinHealthCheckerUI
                 foreach (var command in _selectedSystemCommands)
                 {
                     var commandRunner = _commandLookup[command];
+                    lblCurrentScanValue.Text = command;
                     commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
                     await commandRunner.RunAsync(progress);
                 }
@@ -142,8 +144,10 @@ namespace WinHealthCheckerUI
                 // Run the disk check command based on user selection.
                 if (_diskCheckCommand is not null)
                 {
-                    _diskCheckCommand.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
-                    await _diskCheckCommand.RunAsync(progress);
+                    lblCurrentScanValue.Text = _diskCheckCommand;
+                    var commandRunner = _commandLookup[_diskCheckCommand];
+                    commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
+                    await commandRunner.RunAsync(progress);
                 }
 
                 // Handle the completion of all scans.
@@ -200,11 +204,11 @@ namespace WinHealthCheckerUI
             };
             mnuLicence.Click += (_, _) =>
             {
-              // TODO: Show licence information in message box.
+                Process.Start("explorer", DocumentationUrl);
             };
             mnuAbout.Click += (_, _) =>
             {
-                // TODO: Add about dialog.
+                Process.Start("explorer", AboutUrl);
             };
 
             // Ensure warnings before closing the main window.
@@ -266,7 +270,7 @@ namespace WinHealthCheckerUI
             }
             else if (radScanDiskOnly.Checked)
             {
-                _diskCheckCommand = _commandLookup[radScanDiskOnly.Text];
+                _diskCheckCommand = radScanDiskOnly.Text;
                 if (!_isDiskScanSelected)
                 {
                     IncrementSelectedCommands();
@@ -275,7 +279,7 @@ namespace WinHealthCheckerUI
             }
             else if (radScanAndFixDisk.Checked)
             {
-                _diskCheckCommand = _commandLookup[radScanDiskOnly.Text];
+                _diskCheckCommand = radScanAndFixDisk.Text;
                 if (!_isDiskScanSelected)
                 {
                     IncrementSelectedCommands();
