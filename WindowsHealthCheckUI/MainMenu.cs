@@ -10,28 +10,12 @@ namespace WinHealthCheckerUI
 
         // Define a lookup dictionary for system commands where the key is the UI command name,
         // and the value is the CommandRunner instance for the respective command.
-        private readonly Dictionary<string, CommandRunner> _commandLookup = new()
-        {
-            {
-                "Run Deployment Image Servicing and Management Restore Health (DISM)",
-                new CommandRunner("ping 8.8.8.8")
-            },
-            {
-                "Run System File Checker (SFC)",
-                new CommandRunner("ping 1.1.1.1")
-            },
-            {
-                "Check Disk and Attemp to Fix Issues (CHKDSK /F /R)",
-                new CommandRunner("ping 127.0.0.1")
-            },
-            {
-                "Scan Disk Only (CHKDSK)",
-                new CommandRunner("ping 9.9.9.9")
-            }
-        };
+        private readonly Dictionary<string, CommandRunner> _commandLookup;
 
         private readonly List<string> _selectedSystemCommands = new();
         private string? _diskCheckCommand;
+        private string? _selectedDisk;
+        private CancellationTokenSource? _cancellationTokenSource;
         private bool _isScanning;
         private string? _lastScanOutput;
         private bool _isLastScanSaved = true;
@@ -44,6 +28,18 @@ namespace WinHealthCheckerUI
         {
             InitializeComponent();
             
+            _commandLookup = new Dictionary<string, CommandRunner>
+            {
+                {
+                    "Run Deployment Image Servicing and Management Restore Health (DISM)",
+                    new CommandRunner("ping 8.8.8.8")
+                },
+                {
+                    "Run System File Checker (SFC)",
+                    new CommandRunner("ping 1.1.1.1")
+                },
+            };
+
             _isDiskScanSelected = radNoScan.Checked;
             
             // Handle changes to the selection of system check commands. 
@@ -58,6 +54,7 @@ namespace WinHealthCheckerUI
                         _selectedSystemCommands.Add(command.ToString() ?? "unknown");
                     }
                 }
+                
                 var currentCommandCount = _selectedSystemCommands.Count;
                 if (currentCommandCount < previousCommandCount)
                 {
@@ -73,7 +70,20 @@ namespace WinHealthCheckerUI
             radNoScan.CheckedChanged += RadScanCheckedChanged;
             radScanDiskOnly.CheckedChanged += RadScanCheckedChanged;
             radScanAndFixDisk.CheckedChanged += RadScanCheckedChanged;
+            
+            // Added the disks to the disk selection combo box.
+            var drives = new Drives();
+            foreach (var drive in drives.DriveNames)
+            {
+                cboDiskSelection.Items.Add(drive);
+            }
+            cboDiskSelection.SelectedIndex = 0;
 
+            cboDiskSelection.SelectedIndexChanged += (_, _) =>
+            {
+                _selectedDisk = cboDiskSelection.SelectedItem?.ToString();
+            };
+            
             // Handle the scan start button click event.
             btnStartScans.Click += async (_, _) =>
             {
@@ -123,6 +133,8 @@ namespace WinHealthCheckerUI
                 ScanOutput.AddNewLine("Starting selected scans...");
                 ScanOutput.Show();
 
+                _cancellationTokenSource = new CancellationTokenSource();
+
                 if (_selectedSystemCommands.Count == 0 && _diskCheckCommand is null)
                 {
                     ScanOutput.AddNewLine("No scans selected. Please select at least one scan to run.");
@@ -138,7 +150,11 @@ namespace WinHealthCheckerUI
                     var commandRunner = _commandLookup[command];
                     lblCurrentScanValue.Text = command;
                     commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
-                    await commandRunner.RunAsync(progress);
+                    var exitStatus = await commandRunner.RunAsync(progress, _cancellationTokenSource.Token);
+                    if (exitStatus == CommandRunnerExitStatus.Failure)
+                    {
+                        lblScanErrorsValue.Text = (int.Parse(lblScanErrorsValue.Text) + 1).ToString();
+                    }
                     commandRunner.StandardOutputDataReceived -= CommandRunnerOnStandardOutputDataReceived;
                 }
 
@@ -146,9 +162,17 @@ namespace WinHealthCheckerUI
                 if (_diskCheckCommand is not null)
                 {
                     lblCurrentScanValue.Text = _diskCheckCommand;
-                    var commandRunner = _commandLookup[_diskCheckCommand];
+                    // Make the disk check command runner.
+                    var command = radScanAndFixDisk.Checked 
+                        ? "dir " + _selectedDisk
+                        : "ping 9.9.9.9";
+                    var commandRunner = new CommandRunner(command);
                     commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
-                    await commandRunner.RunAsync(progress);
+                    var exitStatus = await commandRunner.RunAsync(progress, _cancellationTokenSource.Token);
+                    if (exitStatus == CommandRunnerExitStatus.Failure)
+                    {
+                        lblScanErrorsValue.Text = (int.Parse(lblScanErrorsValue.Text) + 1).ToString();
+                    }
                     commandRunner.StandardOutputDataReceived -= CommandRunnerOnStandardOutputDataReceived;
                 }
 
@@ -160,6 +184,12 @@ namespace WinHealthCheckerUI
                 lblCurrentScanValue.Text = "Completed all scans";
                 btnStartScans.Enabled = true;
                 btnCancelScans.Enabled = false;
+            };
+
+            btnCancelScans.Click += (_, _) =>
+            {
+                _cancellationTokenSource?.Cancel();
+                progressBarScans.Value = 0;
             };
 
             // Handle showing the scan output window.

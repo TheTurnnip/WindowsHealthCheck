@@ -17,7 +17,7 @@ public sealed class CommandRunner
         _arguments = command;
     }
 
-    public async Task<CommandRunnerExitStatus> RunAsync(IProgress<int>? progress)
+    public async Task<CommandRunnerExitStatus> RunAsync(IProgress<int>? progress, CancellationToken cancellationToken)
     {
         try
         {
@@ -38,11 +38,15 @@ public sealed class CommandRunner
             process.ErrorDataReceived += (_, args) => OnStandardOutputDataReceived(args.Data);
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync(cancellationToken);
             progress?.Report(1);
             var exitCode = process.ExitCode;
 
             return exitCode != 0 ? CommandRunnerExitStatus.Failure : CommandRunnerExitStatus.Success;
+        }
+        catch (TaskCanceledException)
+        {
+            return CommandRunnerExitStatus.Cancelled;
         }
         catch (Exception e)
         {

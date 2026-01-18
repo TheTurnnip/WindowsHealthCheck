@@ -3,7 +3,7 @@ using System.IO;
 
 public class Drives
 {
-    public List<string> DriveNames { get; } = new();
+    public List<string> DriveNames { get; private set; } = new();
 
     public Drives()
     {
