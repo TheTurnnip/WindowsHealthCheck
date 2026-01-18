@@ -28,15 +28,17 @@ namespace WinHealthCheckerUI
         {
             InitializeComponent();
             
+            
+            
             _commandLookup = new Dictionary<string, CommandRunner>
             {
                 {
                     "Run Deployment Image Servicing and Management Restore Health (DISM)",
-                    new CommandRunner("ping 8.8.8.8")
+                    new CommandRunner("dism /Online /Cleanup-Image /RestoreHealth")
                 },
                 {
                     "Run System File Checker (SFC)",
-                    new CommandRunner("ping 1.1.1.1")
+                    new CommandRunner("sfc /scannow")
                 },
             };
 
