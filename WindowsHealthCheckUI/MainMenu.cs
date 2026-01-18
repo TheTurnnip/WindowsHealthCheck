@@ -38,8 +38,7 @@ namespace WinHealthCheckerUI
         private string? _existingSaveFilePath;
         private bool _isDiskScanSelected;
         private const string DocumentationUrl = "";
-        private const string HelpUrl = "";
-        private const string AboutUrl = "";
+        private const string LicenceUrl = "";
 
         public MainMenu()
         {
@@ -78,6 +77,7 @@ namespace WinHealthCheckerUI
             // Handle the scan start button click event.
             btnStartScans.Click += async (_, _) =>
             {
+                Console.WriteLine(_selectedSystemCommands.Count);
                 if (!_isLastScanSaved)
                 {
                     var result = MessageBox.Show(
@@ -139,6 +139,7 @@ namespace WinHealthCheckerUI
                     lblCurrentScanValue.Text = command;
                     commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
                     await commandRunner.RunAsync(progress);
+                    commandRunner.StandardOutputDataReceived -= CommandRunnerOnStandardOutputDataReceived;
                 }
 
                 // Run the disk check command based on user selection.
@@ -148,13 +149,15 @@ namespace WinHealthCheckerUI
                     var commandRunner = _commandLookup[_diskCheckCommand];
                     commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
                     await commandRunner.RunAsync(progress);
+                    commandRunner.StandardOutputDataReceived -= CommandRunnerOnStandardOutputDataReceived;
                 }
 
                 // Handle the completion of all scans.
                 ScanOutput.AddNewLine("All selected scans completed.");
+                _isScanning = false;
                 _lastScanOutput = ScanOutput.GetOutput();
                 _isLastScanSaved = false;
-                _isScanning = false;
+                lblCurrentScanValue.Text = "Completed all scans";
                 btnStartScans.Enabled = true;
                 btnCancelScans.Enabled = false;
             };
@@ -204,11 +207,11 @@ namespace WinHealthCheckerUI
             };
             mnuLicence.Click += (_, _) =>
             {
-                Process.Start("explorer", DocumentationUrl);
+                Process.Start("explorer", LicenceUrl);
             };
             mnuAbout.Click += (_, _) =>
             {
-                Process.Start("explorer", AboutUrl);
+                // TODO: Implement about dialog.
             };
 
             // Ensure warnings before closing the main window.

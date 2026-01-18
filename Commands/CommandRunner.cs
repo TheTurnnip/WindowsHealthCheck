@@ -2,10 +2,9 @@ using System.Diagnostics;
 
 namespace Commands;
 
-public class CommandRunner
+public sealed class CommandRunner
 {
-    private readonly Process _process;
-    private readonly string? _arguments;
+    private readonly string _arguments;
 
     public event EventHandler<OutputDataReceivedArgs>? StandardOutputDataReceived;
 
@@ -16,63 +15,49 @@ public class CommandRunner
     public CommandRunner(string command)
     {
         _arguments = command;
-        ProcessStartInfo processStartInfo = new ProcessStartInfo
-        {
-            FileName = "cmd.exe",
-            Arguments = "/c " + command,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-
-        _process = new Process()
-        {
-            StartInfo = processStartInfo,
-        };
     }
-    
-    public async Task<bool> RunAsync(IProgress<int>? progress)
+
+    public async Task<CommandRunnerExitStatus> RunAsync(IProgress<int>? progress)
     {
         try
         {
-            _process.Start();
-            _process.OutputDataReceived += (sender, args) => OnStandardOutputDataReceived(args.Data);
-            _process.ErrorDataReceived += (sender, args) => OnStandardOutputDataReceived(args.Data);
-            _process.BeginOutputReadLine();
-            _process.BeginErrorReadLine();
-            await _process.WaitForExitAsync();
-            progress?.Report(1);
-            var exitCode = _process.ExitCode;
+            using var process = new Process();
 
-            if (exitCode != 0)
+            process.StartInfo = new ProcessStartInfo
             {
-                Console.WriteLine("The command exited with a non-zero exit code: " + exitCode);
-                return false;
-            }
+                FileName = "cmd.exe",
+                Arguments = "/c " + _arguments,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
 
-            return true;
+            process.Start();
+            process.OutputDataReceived += (_, args) => OnStandardOutputDataReceived(args.Data);
+            process.ErrorDataReceived += (_, args) => OnStandardOutputDataReceived(args.Data);
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            await process.WaitForExitAsync();
+            progress?.Report(1);
+            var exitCode = process.ExitCode;
+
+            return exitCode != 0 ? CommandRunnerExitStatus.Failure : CommandRunnerExitStatus.Success;
         }
         catch (Exception e)
         {
-            Console.WriteLine("There was an error running the command: " + e.Message);
-            return false;
-        }
-        finally
-        {
-            _process.CancelErrorRead();
-            _process.CancelOutputRead();
+            Console.WriteLine(e);
+            return CommandRunnerExitStatus.CodeException;
         }
     }
 
-    protected virtual void OnStandardOutputDataReceived(string? outputLine)
+    private void OnStandardOutputDataReceived(string? outputLine)
     {
         if (StandardOutputDataReceived == null)
         {
             throw new NullReferenceException("The StandardOutputDataReceived even has no subscribers.");
         }
-        
-        StandardOutputDataReceived.Invoke(this, new OutputDataReceivedArgs(_arguments, outputLine)); 
+
+        StandardOutputDataReceived.Invoke(this, new OutputDataReceivedArgs(_arguments, outputLine));
     }
 }
-

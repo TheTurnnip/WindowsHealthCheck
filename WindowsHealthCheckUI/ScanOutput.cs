@@ -22,7 +22,7 @@ public partial class ScanOutput : Form
     
     public void ClearOutput()
     {
-        txtBoxScanOutput.Clear();
+        txtBoxScanOutput.Text = string.Empty;
     }
     
     public string GetOutput()
