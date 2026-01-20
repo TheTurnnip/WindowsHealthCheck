@@ -16,6 +16,7 @@ namespace WinHealthCheckerUI
         private string? _diskCheckCommand;
         private string? _selectedDisk;
         private CancellationTokenSource? _cancellationTokenSource;
+        private int _completedScanCount;
         private bool _isScanning;
         private string? _lastScanOutput;
         private bool _isLastScanSaved = true;
@@ -27,18 +28,16 @@ namespace WinHealthCheckerUI
         public MainMenu()
         {
             InitializeComponent();
-            
-            
-            
+
             _commandLookup = new Dictionary<string, CommandRunner>
             {
                 {
                     "Run Deployment Image Servicing and Management Restore Health (DISM)",
-                    new CommandRunner("dism /Online /Cleanup-Image /RestoreHealth")
+                    new CommandRunner("dism /Online /Cleanup-Image /RestoreHealth", false)
                 },
                 {
                     "Run System File Checker (SFC)",
-                    new CommandRunner("sfc /scannow")
+                    new CommandRunner("sfc /scannow", true)
                 },
             };
 
@@ -66,6 +65,7 @@ namespace WinHealthCheckerUI
                 {
                     IncrementSelectedCommands();
                 }
+                RefreshCompletedScans();
             };
             
             // Handle the disk radio button changes.
@@ -116,10 +116,12 @@ namespace WinHealthCheckerUI
                 }
 
                 _isScanning = true;
-                btnCancelScans.Enabled = true;
-                btnStartScans.Enabled = false;
-                
+                RefreshCompletedScans();
+                ToggleScanControls();
+                _completedScanCount = 0;
+
                 // Initialize the progress bar.
+                progressBarScans.Value = 0;
                 progressBarScans.Minimum = 0;
                 progressBarScans.Maximum = _selectedSystemCommands.Count 
                                            + (_diskCheckCommand is not null ? 1 : 0);
@@ -145,19 +147,21 @@ namespace WinHealthCheckerUI
                     btnCancelScans.Enabled = false;
                     return;
                 }
-                
-                // Run the selected system commands.
-                foreach (var command in _selectedSystemCommands)
+
+                foreach (var item in chkWindowsSystemChecks.CheckedItems)
                 {
+                    var command = item.ToString() ?? "unknown";
                     var commandRunner = _commandLookup[command];
                     lblCurrentScanValue.Text = command;
-                    commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
+                    commandRunner.OutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
                     var exitStatus = await commandRunner.RunAsync(progress, _cancellationTokenSource.Token);
                     if (exitStatus == CommandRunnerExitStatus.Failure)
                     {
                         lblScanErrorsValue.Text = (int.Parse(lblScanErrorsValue.Text) + 1).ToString();
                     }
-                    commandRunner.StandardOutputDataReceived -= CommandRunnerOnStandardOutputDataReceived;
+                    _completedScanCount++;
+                    RefreshCompletedScans();
+                    commandRunner.OutputDataReceived -= CommandRunnerOnStandardOutputDataReceived;   
                 }
 
                 // Run the disk check command based on user selection.
@@ -168,14 +172,16 @@ namespace WinHealthCheckerUI
                     var command = radScanAndFixDisk.Checked 
                         ? "dir " + _selectedDisk
                         : "ping 9.9.9.9";
-                    var commandRunner = new CommandRunner(command);
-                    commandRunner.StandardOutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
+                    var commandRunner = new CommandRunner(command, false);
+                    commandRunner.OutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
                     var exitStatus = await commandRunner.RunAsync(progress, _cancellationTokenSource.Token);
                     if (exitStatus == CommandRunnerExitStatus.Failure)
                     {
                         lblScanErrorsValue.Text = (int.Parse(lblScanErrorsValue.Text) + 1).ToString();
                     }
-                    commandRunner.StandardOutputDataReceived -= CommandRunnerOnStandardOutputDataReceived;
+                    _completedScanCount++;
+                    RefreshCompletedScans();
+                    commandRunner.OutputDataReceived -= CommandRunnerOnStandardOutputDataReceived;
                 }
 
                 // Handle the completion of all scans.
@@ -184,8 +190,24 @@ namespace WinHealthCheckerUI
                 _lastScanOutput = ScanOutput.GetOutput();
                 _isLastScanSaved = false;
                 lblCurrentScanValue.Text = "Completed all scans";
-                btnStartScans.Enabled = true;
-                btnCancelScans.Enabled = false;
+                // Append a final report the scan output.
+                ScanOutput.AddNewLine($"\r\n\r\nScan Summary:\r\n" +
+                                      $"-------------\r\n" +
+                                      $"Scan Date: {DateTime.Now}\r\n" +
+                                      $"Total Scans Run: {_completedScanCount}\r\n" +
+                                      $"Scan Names:\r\n" +
+                                      $"{Invoke(() => {
+                                          return chkWindowsSystemChecks.CheckedItems.
+                                              Cast<object?>().
+                                              Aggregate("",
+                                                  (current, command) => current + $"{command},"
+                                                      );
+                                      })}" +
+                                      $"{Invoke(
+                                          () => _diskCheckCommand is not null ? $"{_diskCheckCommand}" : ""
+                                          )}\r\n" +
+                                      $"Failed Scans: {lblScanErrorsValue.Text}\r\n");
+                ToggleScanControls();
             };
 
             btnCancelScans.Click += (_, _) =>
@@ -369,6 +391,20 @@ namespace WinHealthCheckerUI
         }
 
         /// <summary>
+        /// Toggles the enabled state of the scan controls.
+        /// </summary>
+        private void ToggleScanControls()
+        {
+            chkWindowsSystemChecks.Enabled = !chkWindowsSystemChecks.Enabled;
+            radNoScan.Enabled = !radNoScan.Enabled;
+            radScanDiskOnly.Enabled = !radScanDiskOnly.Enabled;
+            radScanAndFixDisk.Enabled = !radScanAndFixDisk.Enabled;
+            btnStartScans.Enabled = !btnStartScans.Enabled;
+            btnCancelScans.Enabled = !btnCancelScans.Enabled;
+            cboDiskSelection.Enabled = !cboDiskSelection.Enabled;
+        }
+
+        /// <summary>
         /// Increments the value of selected commands by one.
         /// </summary>
         private void IncrementSelectedCommands()
@@ -383,6 +419,15 @@ namespace WinHealthCheckerUI
         {
             var decrement = int.Parse(lblSelectedScansValue.Text) - 1;
             lblSelectedScansValue.Text = decrement < 0 ? "0" : decrement.ToString();
+        }
+
+        /// <summary>
+        /// Refreshes the completed scans label.
+        /// </summary>
+        private void RefreshCompletedScans()
+        {
+            lblCompletedScansValue.Text = $"{_completedScanCount} / " +
+                                          $"{_selectedSystemCommands.Count + (_diskCheckCommand is not null ? 1 : 0)}";
         }
 
         /// <summary>
