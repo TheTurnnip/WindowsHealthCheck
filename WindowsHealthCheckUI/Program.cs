@@ -1,3 +1,5 @@
+using WinHealthCheckerUI;
+
 namespace WindowsHealthCheckUI
 {
     internal static class Program
