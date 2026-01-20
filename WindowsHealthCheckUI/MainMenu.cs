@@ -22,12 +22,19 @@ namespace WinHealthCheckerUI
         private bool _isLastScanSaved = true;
         private string? _existingSaveFilePath;
         private bool _isDiskScanSelected;
-        private const string DocumentationUrl = "";
-        private const string LicenceUrl = "";
+        private const string DocumentationUrl = "https://github.com/ryansteffan/WindowsHealthCheck/";
+        private const string LicenceUrl = "https://github.com/ryansteffan/WindowsHealthCheck/blob/main/LICENSE.txt";
 
         public MainMenu()
         {
             InitializeComponent();
+            
+            // Add keyboard shortcuts for menu items.
+            mnuSave.ShortcutKeys = Keys.Control | Keys.S;
+            mnuSaveAs.ShortcutKeys = Keys.F12;
+            mnuClose.ShortcutKeys = Keys.Alt | Keys.F4;
+            mnuViewLastOutput.ShortcutKeys = Keys.Control | Keys.V;
+            mnuDocumentation.ShortcutKeys = Keys.Control | Keys.H;
 
             _commandLookup = new Dictionary<string, CommandRunner>
             {
@@ -89,7 +96,6 @@ namespace WinHealthCheckerUI
             // Handle the scan start button click event.
             btnStartScans.Click += async (_, _) =>
             {
-                Console.WriteLine(_selectedSystemCommands.Count);
                 if (!_isLastScanSaved)
                 {
                     var result = MessageBox.Show(
@@ -169,9 +175,11 @@ namespace WinHealthCheckerUI
                 {
                     lblCurrentScanValue.Text = _diskCheckCommand;
                     // Make the disk check command runner.
+                    // TODO: Replace with actual disk check commands.
                     var command = radScanAndFixDisk.Checked 
-                        ? "dir " + _selectedDisk
-                        : "ping 9.9.9.9";
+                        // TODO: full scan requires a reboot.
+                        ? "chkdsk /F /X /R " + _selectedDisk
+                        : "chkdsk " + _selectedDisk;
                     var commandRunner = new CommandRunner(command, false);
                     commandRunner.OutputDataReceived += CommandRunnerOnStandardOutputDataReceived;
                     var exitStatus = await commandRunner.RunAsync(progress, _cancellationTokenSource.Token);
@@ -191,22 +199,7 @@ namespace WinHealthCheckerUI
                 _isLastScanSaved = false;
                 lblCurrentScanValue.Text = "Completed all scans";
                 // Append a final report the scan output.
-                ScanOutput.AddNewLine($"\r\n\r\nScan Summary:\r\n" +
-                                      $"-------------\r\n" +
-                                      $"Scan Date: {DateTime.Now}\r\n" +
-                                      $"Total Scans Run: {_completedScanCount}\r\n" +
-                                      $"Scan Names:\r\n" +
-                                      $"{Invoke(() => {
-                                          return chkWindowsSystemChecks.CheckedItems.
-                                              Cast<object?>().
-                                              Aggregate("",
-                                                  (current, command) => current + $"{command},"
-                                                      );
-                                      })}" +
-                                      $"{Invoke(
-                                          () => _diskCheckCommand is not null ? $"{_diskCheckCommand}" : ""
-                                          )}\r\n" +
-                                      $"Failed Scans: {lblScanErrorsValue.Text}\r\n");
+                GenerateReport();
                 ToggleScanControls();
             };
 
@@ -265,7 +258,8 @@ namespace WinHealthCheckerUI
             };
             mnuAbout.Click += (_, _) =>
             {
-                // TODO: Implement about dialog.
+                var aboutForm = new AboutForm();
+                aboutForm.ShowDialog();
             };
 
             // Ensure warnings before closing the main window.
@@ -280,7 +274,16 @@ namespace WinHealthCheckerUI
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Warning
                     );
-                    args.Cancel = result == DialogResult.No;
+                    if (result == DialogResult.No)
+                    {
+                        args.Cancel = true;
+                    }
+                    if (result == DialogResult.Yes)
+                    {
+                        _cancellationTokenSource?.Cancel();
+                        args.Cancel = false;
+                    }
+                    return;
                 }
 
                 if (!_isLastScanSaved)
@@ -309,6 +312,29 @@ namespace WinHealthCheckerUI
                 
                 args.Cancel = false;
             };
+        }
+        
+        /// <summary>
+        /// Generates a report based on the current scan session and appends it to the scan output.
+        /// </summary>
+        private void GenerateReport()
+        {
+            ScanOutput.AddNewLine($"\r\n\r\nScan Summary:\r\n" +
+                                  $"-------------\r\n" +
+                                  $"Scan Date: {DateTime.Now}\r\n" +
+                                  $"Total Scans Run: {_completedScanCount}\r\n" +
+                                  $"Scan Names:\r\n" +
+                                  $"{Invoke(() => {
+                                      return chkWindowsSystemChecks.CheckedItems.
+                                          Cast<object?>().
+                                          Aggregate("",
+                                              (current, command) => current + $"{command},"
+                                          );
+                                  })}" +
+                                  $"{Invoke(
+                                      () => _diskCheckCommand is not null ? $"{_diskCheckCommand}" : ""
+                                  )}\r\n" +
+                                  $"Failed Scans: {lblScanErrorsValue.Text}\r\n");
         }
 
         /// <summary>
